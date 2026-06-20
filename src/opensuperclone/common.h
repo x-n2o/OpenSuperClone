@@ -33,7 +33,50 @@
 #include <net/if.h>
 #include <netinet/in.h>
 #include <linux/limits.h>
+#if defined(__i386__) || defined(__x86_64__)
+#define OSC_HAS_LEGACY_PORT_IO 1
 #include <sys/io.h>
+#else
+#define OSC_HAS_LEGACY_PORT_IO 0
+static inline int ioperm(unsigned long from, unsigned long num, int turn_on)
+{
+  (void)from;
+  (void)num;
+  (void)turn_on;
+  errno = ENOTSUP;
+  return -1;
+}
+static inline unsigned char inb(unsigned short int port)
+{
+  (void)port;
+  errno = ENOTSUP;
+  return 0;
+}
+static inline void outb(unsigned char value, unsigned short int port)
+{
+  (void)value;
+  (void)port;
+  errno = ENOTSUP;
+}
+static inline unsigned short int inw(unsigned short int port)
+{
+  (void)port;
+  errno = ENOTSUP;
+  return 0;
+}
+static inline void outw(unsigned short int value, unsigned short int port)
+{
+  (void)value;
+  (void)port;
+  errno = ENOTSUP;
+}
+static inline void insw(unsigned short int port, void *addr, unsigned long int count)
+{
+  (void)port;
+  memset(addr, 0, count * sizeof(unsigned short int));
+  errno = ENOTSUP;
+}
+#endif
 #include <sys/mman.h>
 #include <byteswap.h>
 #include <dirent.h>

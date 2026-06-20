@@ -6106,6 +6106,18 @@ int find_all_devices_ccc(void)
   device_count_ccc = 0;
   if (direct_mode_ccc)
   {
+#if !OSC_HAS_LEGACY_PORT_IO
+    if (!ahci_mode_ccc)
+    {
+      snprintf(tempmessage_ccc, TEMP_MESSAGE_SIZE, "%s", _("Legacy direct IDE mode is not supported on this CPU architecture.\nUse AHCI direct mode or passthrough mode instead.\n"));
+      message_error_ccc(tempmessage_ccc);
+      if (!superclone_ccc)
+      {
+        fprintf(stderr, "%s", tempmessage_ccc);
+      }
+      return -1;
+    }
+#endif
     // direct
     // list possible drivers
     char command[255];
@@ -8885,6 +8897,18 @@ int connect_source_disk_ccc(void)
   //  if direct mode then setup io and backup some information
   if (direct_mode_ccc)
   {
+#if !OSC_HAS_LEGACY_PORT_IO
+    if (!ahci_mode_ccc)
+    {
+      snprintf(tempmessage_ccc, TEMP_MESSAGE_SIZE, "%s", _("Legacy direct IDE mode is not supported on this CPU architecture.\nUse AHCI direct mode or passthrough mode instead.\n"));
+      message_error_ccc(tempmessage_ccc);
+      if (!superclone_ccc)
+      {
+        fprintf(stderr, "%s", tempmessage_ccc);
+      }
+      return -1;
+    }
+#endif
     if (ahci_mode_ccc)
     {
       if (enable_hba_test_on_connect_source_ccc) // TODO this is debug for troubleshooting the hba and port
